@@ -32,7 +32,8 @@ rFunction = function(data = NULL,
                      app_title = NULL,
                      app_pos = NULL, 
                      product_file,
-                     track_combine = c("merge", "rename")
+                     track_combine = c("merge", "rename"),
+                     return_on_fail = FALSE
                      ){
   
   # input processing -----------------------------------------------------------
@@ -104,8 +105,15 @@ rFunction = function(data = NULL,
       logger.fatal("No input data to return. Terminating retrieval")
       stop()
     } else {
-      logger.warn("Returning input data with no further data retrieved")
-      return(data)
+      
+      if (return_on_fail == TRUE) {
+        logger.warn("return_on_fail is set to TRUE. Returning input data with no further data retrieved")
+        return(data)
+      } else {
+        logger.fatal("return_on_fail is set to FALSE. Terminating retrieval")
+        stop()
+      }
+      
     }
   }
 
@@ -140,9 +148,16 @@ rFunction = function(data = NULL,
         call = NULL
         )
       } else {
-        # If there is data, return it with warning
-        logger.warn("Returning input data with no retrieved data")
-        return(data)
+        
+        if (return_on_fail == TRUE) {
+          # If there is data, return it with warning
+          logger.warn("return_on_fail is set to TRUE. Returning input data with no further data retrieved")
+          return(data)
+        } else {
+          logger.fatal("return_on_fail is set to FALSE. Terminating retrieval")
+          stop()
+        }
+   
       }
       
       
@@ -160,9 +175,9 @@ rFunction = function(data = NULL,
     if(nrow(app_products) == 0){
       
       logger.warn(paste0("There is no App with name matching '", app_title, "' in position #", 
-                          app_pos, " of Workflow ", wflw_inst_label, ".  ",
+                         app_pos, " of Workflow ", wflw_inst_label, ".  ",
                          "Make sure parameters `app_title` and `app_pos` point coherently to the target App."
-                         ))
+      ))
       
       if (is.null(data)) {
         logger.fatal("No input data to return. Terminating retrieval")
@@ -176,9 +191,16 @@ rFunction = function(data = NULL,
         call = NULL
         )
       } else {
-        # If there is data, return it with warning
-        logger.warn("Returning input data with no retrieved data")
-        return(data)
+        
+        if (return_on_fail == TRUE) {
+          # If there is data, return it with warning
+          logger.warn("return_on_fail is set to TRUE. Returning input data with no further data retrieved")
+          return(data)
+        } else {
+          logger.fatal("return_on_fail is set to FALSE. Terminating retrieval")
+          stop()
+        }
+        
       }
       
       
@@ -208,9 +230,16 @@ rFunction = function(data = NULL,
         call = NULL
         )
       } else {
-        # If there is data, return it with warning
-        logger.warn("Returning input data with no retrieved data")
-        return(data)
+        
+        if (return_on_fail == TRUE) {
+          # If there is data, return it with warning
+          logger.warn("return_on_fail is set to TRUE. Returning input data with no further data retrieved")
+          return(data)
+        } else {
+          logger.fatal("return_on_fail is set to FALSE. Terminating retrieval")
+          stop()
+        }
+        
       }
       
       
@@ -219,14 +248,34 @@ rFunction = function(data = NULL,
     # Dealing with multiple copies of same app in a Workflow, when only app_title is specified
     # Assumes Products in any given App have unique filenames
     if(any(duplicated(app_products$fileName))){
-      rlang::abort(message = c(
-        "Unable to unambiguously identify the specified target App.",
-        "x" = paste0("There is more than one copy of App '", app_title, 
-                     "' in the target Workflow ", wflw_inst_label, "."),
-        "i" = "Please provide the target App position (`app_pos`)."
-      ),
-      call = NULL
-      )
+      
+      if (return_on_fail == TRUE) {
+        logger.warn(paste0(
+            "Unable to unambiguously identify the specified target App.",
+            "There is more than one copy of App '", app_title, 
+                         "' in the target Workflow ", wflw_inst_label, ".",
+            "Please provide the target App position (`app_pos`)."
+        ))
+        
+        if (!is.null(data) & return_on_fail == TRUE) {
+          logger.warn("return_on_fail is TRUE. Returning input data") 
+          return(data)
+        } else {
+          stop("return_on_fail is TRUE but no input data is provided. Terminating retrieval")
+        }
+        
+        
+      } else {
+        rlang::abort(message = c(
+          "Unable to unambiguously identify the specified target App.",
+          "x" = paste0("There is more than one copy of App '", app_title, 
+                       "' in the target Workflow ", wflw_inst_label, "."),
+          "i" = "Please provide the target App position (`app_pos`)."
+        ),
+        call = NULL
+        )
+      }
+      
     }
   }
   

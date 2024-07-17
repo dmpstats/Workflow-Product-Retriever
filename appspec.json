@@ -54,7 +54,15 @@
           "displayText": "Rename"
         }
         ]
+    },
+    {
+      "id": "return_on_fail",
+      "name": "Return Input Data on Fail",
+      "description": "Choose how to respond to some (expected) errors, such as the retrieved object being unexpected. TRUE means that this MoveApp's input data (if provided) will be returned with a warning, allowing later apps to continue processing. Note that this will not work for unexpected errors.",
+      "defaultvalue": false,
+      "type": "CHECKBOX"
     }
+
   ],
   "dependencies": {
     "R": [

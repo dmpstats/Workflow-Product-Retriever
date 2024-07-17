@@ -1,3 +1,8 @@
+---
+editor_options: 
+  markdown: 
+    wrap: 72
+---
 
 # Workflow Product Retriever
 
@@ -15,7 +20,7 @@ between multiple Workflows.
 ## Documentation
 
 This App allows users to retrieve objects generated in other Workflows
-and combine them with the current input data. It uses MoveApps’ API
+and combine them with the current input data. It uses MoveApps' API
 functionality in creating stable HTTP links for accessing up-to-date App
 Products, such as artifacts and output files, facilitating data
 exchanges between concurrent Workflows.
@@ -25,12 +30,12 @@ App within an active instance of a concurrent Workflow. The downloaded
 object is then appended to the input `move2::move2_loc` data according
 to the following operating rule:
 
-- If the retrieved Product is also a `move2::move2_loc` object, its data
-  is **stacked** to the input data
-- Otherwise, the retrieved Product is **attached** to the input data via
-  an object
-  [attribute](https://stat.ethz.ch/R-manual/R-devel/library/base/html/attr.html)
-  named `appended_products`.
+-   If the retrieved Product is also a `move2::move2_loc` object, its
+    data is **stacked** to the input data
+-   Otherwise, the retrieved Product is **attached** to the input data
+    via an object
+    [attribute](https://stat.ethz.ch/R-manual/R-devel/library/base/html/attr.html)
+    named `appended_products`.
 
 This dual approach offers the flexibility to collect a wide range of
 object types and classes (`move2::move2_loc`, `move2::move2_nonloc`,
@@ -39,9 +44,9 @@ expanding the usability of the output in downstream Apps. Currently, the
 App supports the retrieval of Products stored under the following
 file-types:
 
-- **`.csv`**
-- **`.txt`**
-- **`.rds`**
+-   **`.csv`**
+-   **`.txt`**
+-   **`.rds`**
 
 Users can employ multiple instances of the App whithin a Workflow,
 linking them sequentially or deploying them at different stages of the
@@ -53,7 +58,7 @@ as an intermediary App.
 
 > **Important**
 >
-> In order to use the App’s functionality, the user must first create
+> In order to use the App's functionality, the user must first create
 > stable API links to the Workflow instance containing the desired
 > Product(s). Instructions for generating API access credentials for
 > your Workflows are available in the [MoveApps API Links
@@ -65,40 +70,41 @@ Using the Workflow instance API access credentials, users are required
 to specify the name of the target Product, along with either the title
 or the position of the App within Workflow where it is located.
 
-#### Further details
+#### Further details {#further-details}
 
 As explained above, the method of appending the retrieved product to the
 input dataset depends on whether the fetched object is of class
 `move2::move2_loc` (stacked) or another class (attached via an
 attribute). Additionally:
 
-- When stacking, the App offers an option to manage duplicated track IDs
-  between the two stacked datasets. Users can choose between merging or
-  renaming the duplicated IDs (see `track_combine` in Section
-  [Parameters](#parameters)).
+-   When stacking, the App offers an option to manage duplicated track
+    IDs between the two stacked datasets. Users can choose between
+    merging or renaming the duplicated IDs (see `track_combine` in
+    Section [Parameters](#parameters)).
 
-- In case the stacked dataset includes time-location duplicates, the App
-  automatically removes the duplicated rows with less information. A
-  warning message is issued.
+-   In case the stacked dataset includes time-location duplicates, the
+    App automatically removes the duplicated rows with less information.
+    A warning message is issued.
 
-- If stacking involves objects with different CRS projections, the
-  retrieved `move2::move2_loc` data is pre-projected match the CRS of
-  the input dataset before the stacking step takes place. A warning
-  message is issued.
+-   If stacking involves objects with different CRS projections, the
+    retrieved `move2::move2_loc` data is pre-projected match the CRS of
+    the input dataset before the stacking step takes place. A warning
+    message is issued.
 
-- When attaching, the retrieved product is assigned to the list element
-  `object` of the output’s `appended_products` attribute (see Section
-  [Accessing Attached Products](#accessing-attached-products) for
-  further details).
+-   When attaching, the retrieved product is assigned to the list
+    element `object` of the output's `appended_products` attribute (see
+    Section [Accessing Attached Products](#accessing-attached-products)
+    for further details).
 
-- Regardless of the appending method used, metadata containing pertinent
-  information on the retrieved product (e.g. source Workflow instance,
-  App Title, Product filename, time of last modification) is stored in
-  list element `metadata` of the output’s `appended_products` attribute.
+-   Regardless of the appending method used, metadata containing
+    pertinent information on the retrieved product (e.g. source Workflow
+    instance, App Title, Product filename, time of last modification) is
+    stored in list element `metadata` of the output's
+    `appended_products` attribute.
 
-- The `appended_products` attribute itself is a `list` object, meaning
-  Products retrieved in multiple deployments of the App whithin a
-  Workflow are added consecutively as list elements.
+-   The `appended_products` attribute itself is a `list` object, meaning
+    Products retrieved in multiple deployments of the App whithin a
+    Workflow are added consecutively as list elements.
 
 ### Input data
 
@@ -116,13 +122,13 @@ more info.
 `appended_product_metadata.csv`: a table with the metadata of the
 appended Workflow Product.
 
-### Parameters
+### Parameters {#parameters}
 
-**ID of Target Workflow Instance** (`usr`): the API’s ID (i.e. Username)
+**ID of Target Workflow Instance** (`usr`): the API's ID (i.e. Username)
 of the Workflow Instance containing the target Product (check
 <https://docs.moveapps.org/#/API>). Default: `NULL`.
 
-**Password of Target Workflow Instance** (`pwd`): the API’s Password of
+**Password of Target Workflow Instance** (`pwd`): the API's Password of
 the Workflow Instance containing the target Product (check
 <https://docs.moveapps.org/#/API>). Default: `NULL`.
 
@@ -132,25 +138,38 @@ clarity, aliases or acronyms are accepted. Default: `NULL`.
 
 **Target App Title** (`app_title`): the name of the App comprising the
 target Product. Please ensure the name of the App is accurate. Not
-required if ‘Target App Position in Workflow’ is specified. Default:
+required if 'Target App Position in Workflow' is specified. Default:
 `NULL`.
 
 **Target App Position in Workflow** (`app_pos`): Enter the position of
-the App containing the target Product in the Workflow’s pipeline (note:
-initial App is in position 1). Not required if ‘Target App Title’ is
+the App containing the target Product in the Workflow's pipeline (note:
+initial App is in position 1). Not required if 'Target App Title' is
 specified. Default: `NULL`.
 
 **Target Product Filename** (`product_file`): the target Product name.
 Please ensure the filename is accurate. You can omit the extension,
 unless multiple artifact files in the target App share the same
-basename. Currently supported target Product file-types: ‘.rds’, ‘.csv’,
-and ‘.txt’. Default: `NULL`.
+basename. Currently supported target Product file-types: '.rds', '.csv',
+and '.txt'. Default: `NULL`.
 
 **Duplicated Track IDs** (`track_combine`): If the target Product is a
 `move2::move2_loc` object, you can choose how to handle potential
 duplicated track IDs when stacking input and retrieved datasets. The
-‘Merge’ option combines tracks with the same name, while the ‘Rename’
-option assigns new names to non-unique tracks. Default: ‘Merge’.
+'Merge' option combines tracks with the same name, while the 'Rename'
+option assigns new names to non-unique tracks. Default: 'Merge'.
+
+**Return-on-Fail** (`return_on_fail`): If input data is provided (i.e.
+this is not the first MoveApp in a workflow), you can choose how to
+handle some expected errors. Setting this to TRUE means that the input
+data will be passed onto the next MoveApp in the following situations:
+
+-   No MoveApp with name **Target App Title** can be found
+
+-   The target workflow has hit an error before reaching the target
+    MoveApp
+
+-   The target workflow has more than one MoveApp names **Target App
+    Title**
 
 ### Most common errors
 
@@ -159,17 +178,24 @@ accurately identify the target Product for retrieval, the App will
 generate informative error messages indicating where the
 misspecification occurred. Most common misspecifications include:
 
-- inaccurate naming of target App title and/or Product filename;
-- non-existence of the target Product in the specified App;
-- inconsistency between the specified name of the target App and the
-  specified position of that App in the target Workflow.
+1.  inaccurate naming of target App title
+2.  inaccurate naming of target Product filename;
+3.  non-existence of the target Product in the specified App;
+4.  inconsistency between the specified name of the target App and the
+    specified position of that App in the target Workflow.
+
+Setting **Return-on-Fail** to `TRUE` means that this MoveApp will return
+its input data with no retrieved data in the case of errors `1` and `3`
+above. It is recommended **not** to use this setting until you are
+confident that the target App title, filename, and position are
+guaranteed to be correct.
 
 <div>
 
 > **Caution**
 >
 > This App was developed based on the existing structure and attribute
-> names underlying MoveApps’s API framework. If there are changes to
+> names underlying MoveApps's API framework. If there are changes to
 > naming conventions or modifications in the way API links are
 > constructed in the future, the code will be susceptible to HTTP
 > request errors.
@@ -187,86 +213,88 @@ recommend specifying a clear and identifiable name for the target
 Workflow to ensure clarity when potentially referring to appended
 Products in downstream Apps.
 
-### Accessing Attached Products
+### Accessing Attached Products {#accessing-attached-products}
 
-This section offers additional information about the App’s output data.
+This section offers additional information about the App's output data.
 It is particularly relevant for developers wanting to use the output
 dataset in the development of downstream Apps. MoveApps users intending
 to access the output data locally can also find this section useful.
 
 As described [above](#further-details), the `appended_products`
-attribute of the App’s output is a `list` object storing information,
+attribute of the App's output is a `list` object storing information,
 and on occasion the actual data, of Products retrieved from concurrent
 Workflows. Each list element represents an instance of the App deployed
 within the current Workflow up to the current stage, containing the
 relevant data of the fetched Product in a sub-list with the following
 elements:
 
-- `metadata`: holds high-level information about the appended Product
-  (e.g. original Workflow and App titles, last time modified, whether in
-  was stacked or annexed to the input data). This element is always
-  present in `appended_products`, regardless of the appending method
-  applied.
+-   `metadata`: holds high-level information about the appended Product
+    (e.g. original Workflow and App titles, last time modified, whether
+    in was stacked or annexed to the input data). This element is always
+    present in `appended_products`, regardless of the appending method
+    applied.
 
-- `object`: stores the actual object(s) contained in the fetched Product
-  when they belong to classes other than `move2:move2_loc`.
+-   `object`: stores the actual object(s) contained in the fetched
+    Product when they belong to classes other than `move2:move2_loc`.
 
 `appended_products` can be accessed using the `attr()` function. For
 example, the following code demonstrates how to access information and
 data from appended objects after deploying the App twice to retrieve
 Products from two different target Apps in a concurrent (mock) Workflow.
-First, let’s verify if two Products have indeed been retrieved and
-appended to the App’s current output object (`app_output`).
+First, let's verify if two Products have indeed been retrieved and
+appended to the App's current output object (`app_output`).
 
 ``` r
 # quick look at the app's output object
 app_output
 ```
 
-    A <move2> with `track_id_column` "individual_name_deployment_id" and
-    `time_column` "timestamp"
-    Containing 5 tracks lasting on average 267 days in a
-    Simple feature collection with 8020 features and 46 fields
-    Geometry type: POINT
-    Dimension:     XY
-    Bounding box:  xmin: 3.7317 ymin: -14.6795 xmax: 53.61963 ymax: 69.15667
-    Geodetic CRS:  WGS 84
-    # A tibble: 8,020 × 47
-       sensor_type_id barometric_pressure data_decoding_software eobs_activity
-     *        <int64>              [mbar] <fct>                          <int>
-     1            653                  NA <NA>                              NA
-     2            653                  NA <NA>                              NA
-     3            653                  NA <NA>                              NA
-     4            653                  NA <NA>                              NA
-     5            653                  NA <NA>                              NA
-     6            653                  NA <NA>                              NA
-     7            653                  NA <NA>                              NA
-     8            653                  NA <NA>                              NA
-     9            653                  NA <NA>                              NA
-    10            653                  NA <NA>                              NA
-    # ℹ 8,010 more rows
-    # ℹ 43 more variables: eobs_activity_samples <dbl>, eobs_battery_voltage [mV],
-    #   eobs_fix_battery_voltage [mV], eobs_horizontal_accuracy_estimate [m],
-    #   eobs_key_bin_checksum <int64>, eobs_speed_accuracy_estimate [m/s],
-    #   eobs_start_timestamp <dttm>, eobs_status <ord>, eobs_temperature [°C],
-    #   eobs_type_of_fix <fct>, eobs_used_time_to_get_fix [s], gps_dop [1],
-    #   gps_satellite_count [count], ground_speed [m/s], gt_tx_count [count], …
-    Track features:
-    # A tibble: 5 × 111
-      individual_name_deploym…¹ deployment_id tag_id individual_id animal_life_stage
-    * <chr>                           <int64> <int6>       <int64> <fct>            
-    1 742 (deploy_id:56853924)       20813892    2e7      20813618 <NA>             
-    2 746 (deploy_id:20813885)       56853924    5e7      56850841 <NA>             
-    3 749 (deploy_id:20813892)       20813885    2e7      20813603 <NA>             
-    4 Bateleur_8889                        NA   NA              NA <NA>             
-    5 TAWNY_8891                           NA   NA              NA <NA>             
-    # ℹ abbreviated name: ¹​individual_name_deployment_id
-    # ℹ 106 more variables: animal_mass [g], attachment_type <fct>,
-    #   deployment_comments <chr>, deploy_off_person <chr>,
-    #   deploy_off_timestamp <dttm>, deploy_on_person <chr>,
-    #   deploy_on_timestamp <dttm>, deployment_end_type <fct>,
-    #   deployment_local_identifier <fct>, manipulation_type <fct>,
-    #   study_site <chr>, sensor_type_ids <chr>, capture_location <POINT [°]>, …
+```         
+A <move2> with `track_id_column` "individual_name_deployment_id" and
+`time_column` "timestamp"
+Containing 5 tracks lasting on average 267 days in a
+Simple feature collection with 8020 features and 46 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 3.7317 ymin: -14.6795 xmax: 53.61963 ymax: 69.15667
+Geodetic CRS:  WGS 84
+# A tibble: 8,020 × 47
+   sensor_type_id barometric_pressure data_decoding_software eobs_activity
+ *        <int64>              [mbar] <fct>                          <int>
+ 1            653                  NA <NA>                              NA
+ 2            653                  NA <NA>                              NA
+ 3            653                  NA <NA>                              NA
+ 4            653                  NA <NA>                              NA
+ 5            653                  NA <NA>                              NA
+ 6            653                  NA <NA>                              NA
+ 7            653                  NA <NA>                              NA
+ 8            653                  NA <NA>                              NA
+ 9            653                  NA <NA>                              NA
+10            653                  NA <NA>                              NA
+# ℹ 8,010 more rows
+# ℹ 43 more variables: eobs_activity_samples <dbl>, eobs_battery_voltage [mV],
+#   eobs_fix_battery_voltage [mV], eobs_horizontal_accuracy_estimate [m],
+#   eobs_key_bin_checksum <int64>, eobs_speed_accuracy_estimate [m/s],
+#   eobs_start_timestamp <dttm>, eobs_status <ord>, eobs_temperature [°C],
+#   eobs_type_of_fix <fct>, eobs_used_time_to_get_fix [s], gps_dop [1],
+#   gps_satellite_count [count], ground_speed [m/s], gt_tx_count [count], …
+Track features:
+# A tibble: 5 × 111
+  individual_name_deploym…¹ deployment_id tag_id individual_id animal_life_stage
+* <chr>                           <int64> <int6>       <int64> <fct>            
+1 742 (deploy_id:56853924)       20813892    2e7      20813618 <NA>             
+2 746 (deploy_id:20813885)       56853924    5e7      56850841 <NA>             
+3 749 (deploy_id:20813892)       20813885    2e7      20813603 <NA>             
+4 Bateleur_8889                        NA   NA              NA <NA>             
+5 TAWNY_8891                           NA   NA              NA <NA>             
+# ℹ abbreviated name: ¹​individual_name_deployment_id
+# ℹ 106 more variables: animal_mass [g], attachment_type <fct>,
+#   deployment_comments <chr>, deploy_off_person <chr>,
+#   deploy_off_timestamp <dttm>, deploy_on_person <chr>,
+#   deploy_on_timestamp <dttm>, deployment_end_type <fct>,
+#   deployment_local_identifier <fct>, manipulation_type <fct>,
+#   study_site <chr>, sensor_type_ids <chr>, capture_location <POINT [°]>, …
+```
 
 ``` r
 # extract the data stored in output's `appended_products` attribute
@@ -275,7 +303,9 @@ apnd_prods <- attr(app_output, "appended_products")
 length(apnd_prods)
 ```
 
-    [1] 2
+```         
+[1] 2
+```
 
 We can then query the metadata of the two appended products.
 
@@ -283,26 +313,28 @@ We can then query the metadata of the two appended products.
 purrr::map(apnd_prods, ~.$metadata)
 ```
 
-    [[1]]
-      workflow_title        instance_title appPositionInWorkflow
-    1           Mock Workflow Instance 001                     2
-                      appTitle       fileName   mimeType fileSize
-    1 Add Local and Solar Time data_wtime.csv text/plain   172252
-                       modifiedAt file_basename file_ext append_type
-    1 2023-11-01T15:46:49.336246Z    data_wtime      csv    attached
+```         
+[[1]]
+  workflow_title        instance_title appPositionInWorkflow
+1           Mock Workflow Instance 001                     2
+                  appTitle       fileName   mimeType fileSize
+1 Add Local and Solar Time data_wtime.csv text/plain   172252
+                   modifiedAt file_basename file_ext append_type
+1 2023-11-01T15:46:49.336246Z    data_wtime      csv    attached
 
-    [[2]]
-      workflow_title        instance_title appPositionInWorkflow
-    1           mock Workflow Instance 001                     8
-                                                appTitle       fileName
-    1 Standardise Formats and Calculate Basic Statistics app-output.rds
-               mimeType fileSize                  modifiedAt file_basename file_ext
-    1 application/r-rds    22417 2024-01-08T14:12:24.868915Z    app-output      rds
-      append_type
-    1     stacked
+[[2]]
+  workflow_title        instance_title appPositionInWorkflow
+1           mock Workflow Instance 001                     8
+                                            appTitle       fileName
+1 Standardise Formats and Calculate Basic Statistics app-output.rds
+           mimeType fileSize                  modifiedAt file_basename file_ext
+1 application/r-rds    22417 2024-01-08T14:12:24.868915Z    app-output      rds
+  append_type
+1     stacked
+```
 
 As indicated in the `append_type` column, the first retrieved product
-was attached as an element of the Output’s `appended_products`
+was attached as an element of the Output's `appended_products`
 attribute, while the second fetched product (of class `move2:move2_loc`)
 was stacked to the input dataset.
 
@@ -315,26 +347,28 @@ apnd_prods |>
   purrr::pluck("object")
 ```
 
-    # A tibble: 250 × 85
-       trackId       timestamp           location.long location.lat sensor
-       <chr>         <dttm>                      <dbl>        <dbl> <chr> 
-     1 Bateleur_8889 2023-10-01 14:45:12          38.6        -9.62 GPS   
-     2 Bateleur_8889 2023-10-01 15:00:18          38.6        -9.62 GPS   
-     3 Bateleur_8889 2023-10-01 15:15:13          38.6        -9.62 GPS   
-     4 Bateleur_8889 2023-10-01 15:30:12          38.6        -9.62 GPS   
-     5 Bateleur_8889 2023-10-01 15:45:15          38.6        -9.62 GPS   
-     6 Bateleur_8889 2023-10-01 16:00:18          38.6        -9.62 GPS   
-     7 Bateleur_8889 2023-10-01 16:15:11          38.6        -9.62 GPS   
-     8 Bateleur_8889 2023-10-01 16:30:10          38.6        -9.62 GPS   
-     9 Bateleur_8889 2023-10-01 16:45:11          38.6        -9.62 GPS   
-    10 Bateleur_8889 2023-10-01 17:00:11          38.6        -9.62 GPS   
-    # ℹ 240 more rows
-    # ℹ 80 more variables: individual.taxon.canonical.name <chr>, event.id <dbl>,
-    #   barometric.pressure <dbl>, data.decoding.software <dbl>,
-    #   eobs.battery.voltage <dbl>, eobs.fix.battery.voltage <dbl>,
-    #   eobs.horizontal.accuracy.estimate <dbl>, eobs.key.bin.checksum <dbl>,
-    #   eobs.speed.accuracy.estimate <dbl>, eobs.start.timestamp <dttm>,
-    #   eobs.status <chr>, eobs.temperature <dbl>, eobs.type.of.fix <dbl>, …
+```         
+# A tibble: 250 × 85
+   trackId       timestamp           location.long location.lat sensor
+   <chr>         <dttm>                      <dbl>        <dbl> <chr> 
+ 1 Bateleur_8889 2023-10-01 14:45:12          38.6        -9.62 GPS   
+ 2 Bateleur_8889 2023-10-01 15:00:18          38.6        -9.62 GPS   
+ 3 Bateleur_8889 2023-10-01 15:15:13          38.6        -9.62 GPS   
+ 4 Bateleur_8889 2023-10-01 15:30:12          38.6        -9.62 GPS   
+ 5 Bateleur_8889 2023-10-01 15:45:15          38.6        -9.62 GPS   
+ 6 Bateleur_8889 2023-10-01 16:00:18          38.6        -9.62 GPS   
+ 7 Bateleur_8889 2023-10-01 16:15:11          38.6        -9.62 GPS   
+ 8 Bateleur_8889 2023-10-01 16:30:10          38.6        -9.62 GPS   
+ 9 Bateleur_8889 2023-10-01 16:45:11          38.6        -9.62 GPS   
+10 Bateleur_8889 2023-10-01 17:00:11          38.6        -9.62 GPS   
+# ℹ 240 more rows
+# ℹ 80 more variables: individual.taxon.canonical.name <chr>, event.id <dbl>,
+#   barometric.pressure <dbl>, data.decoding.software <dbl>,
+#   eobs.battery.voltage <dbl>, eobs.fix.battery.voltage <dbl>,
+#   eobs.horizontal.accuracy.estimate <dbl>, eobs.key.bin.checksum <dbl>,
+#   eobs.speed.accuracy.estimate <dbl>, eobs.start.timestamp <dttm>,
+#   eobs.status <chr>, eobs.temperature <dbl>, eobs.type.of.fix <dbl>, …
+```
 
 Data in the second appended product was stacked to the input dataset,
 and hence the respective `object` element is non-existent.
@@ -345,4 +379,6 @@ apnd_prods |>
   purrr::pluck("object")
 ```
 
-    NULL
+```         
+NULL
+```
