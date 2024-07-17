@@ -6,3 +6,4 @@
 data/output/**
 !data/output/.keep
 tests/manage-workflow-credentials.r
+data/raw/GAIA_test.rds
