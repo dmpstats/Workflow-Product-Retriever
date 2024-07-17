@@ -79,23 +79,35 @@ rFunction = function(data = NULL,
   logger.info("Fetching API endpoints to Apps and associated Products in target Workflow")
   wf_products_resp <- get_workflow_products(usr, pwd)
   
-  
   # Process response  --------------------------------------------------------
-  wf_products <- purrr::map(wf_products_resp$results, as.data.frame) |> 
+  wf_products_temp <- purrr::map(wf_products_resp$results, as.data.frame) |> 
     purrr::list_rbind() |> 
     # add useful info
     dplyr::mutate(
       workflow_title = workflow_title,
       instance_title = wf_products_resp$workflowInstanceTitle, 
       .before = 1
-    ) |> 
-    # split basename and extension
-    dplyr::mutate(
-      # shift app positions one place as API counts them from zero. Starting from 1 more user-friendly
-      appPositionInWorkflow = appPositionInWorkflow + 1,
-      file_basename = fs::path_ext_remove(fileName),
-      file_ext = fs::path_ext(fileName)
-    )
+    ) 
+  
+  if (nrow(wf_products_temp != 0)) {
+    wf_products <- wf_products_temp |> 
+      # split basename and extension
+      dplyr::mutate(
+        # shift app positions one place as API counts them from zero. Starting from 1 more user-friendly
+        appPositionInWorkflow = appPositionInWorkflow + 1,
+        file_basename = fs::path_ext_remove(fileName),
+        file_ext = fs::path_ext(fileName)
+      )
+  } else {
+    logger.warn("This workflow has no results, and may have hit an error")
+    if (is.null(data)) {
+      logger.fatal("No input data to return. Terminating retrieval")
+      stop()
+    } else {
+      logger.warn("Returning input data with no further data retrieved")
+      return(data)
+    }
+  }
 
   # generate workflow label for error messaging 
   wflw_inst_label <- paste0("'", workflow_title, ": ", wf_products$instance_title[1], "'")
@@ -110,12 +122,30 @@ rFunction = function(data = NULL,
     
     # non-existent/invalid user-specified App position
     if(nrow(app_products) == 0){
-      rlang::abort(message = c(
-        paste0("There is no App available in position #", app_pos, " of Workflow ", 
-               wflw_inst_label, "."),
-        "i" = "Please check the target Workflow page to get a valid App position number."),
+      
+      logger.warn(paste0("There is no App with name matching '", app_title, "' in position #", 
+                         app_pos, " of Workflow ", wflw_inst_label, ".  ",
+                         "Make sure parameters `app_title` and `app_pos` point coherently to the target App."
+      ))
+      
+      if (is.null(data)) {
+        logger.fatal("No input data to return. Terminating retrieval")
+        rlang::abort(message = c(
+          paste0("There is no App with name matching '", app_title, "' in Workflow ", 
+                 wflw_inst_label, "."),
+          "i" = paste0("Please check the Workflow page and make sure the",
+                       " title of the target App is spelled accurately in",
+                       " parameter `app_title` (case-sensitive).")
+        ),
         call = NULL
-      )
+        )
+      } else {
+        # If there is data, return it with warning
+        logger.warn("Returning input data with no retrieved data")
+        return(data)
+      }
+      
+      
     }
     
     # set app title as stated in the API
@@ -128,13 +158,30 @@ rFunction = function(data = NULL,
     
     # non-existent/invalid user-specified App title in user-specified position
     if(nrow(app_products) == 0){
-      rlang::abort(message = c(
-        paste0("There is no App with name matching '", app_title, "' in position #", 
-               app_pos, " of Workflow ", wflw_inst_label, "."),
-        "i" = "Make sure parameters `app_title` and `app_pos` point coherently to the target App."
-      ),
-      call = NULL
-      )
+      
+      logger.warn(paste0("There is no App with name matching '", app_title, "' in position #", 
+                          app_pos, " of Workflow ", wflw_inst_label, ".  ",
+                         "Make sure parameters `app_title` and `app_pos` point coherently to the target App."
+                         ))
+      
+      if (is.null(data)) {
+        logger.fatal("No input data to return. Terminating retrieval")
+        rlang::abort(message = c(
+          paste0("There is no App with name matching '", app_title, "' in Workflow ", 
+                 wflw_inst_label, "."),
+          "i" = paste0("Please check the Workflow page and make sure the",
+                       " title of the target App is spelled accurately in",
+                       " parameter `app_title` (case-sensitive).")
+        ),
+        call = NULL
+        )
+      } else {
+        # If there is data, return it with warning
+        logger.warn("Returning input data with no retrieved data")
+        return(data)
+      }
+      
+      
     }
   } else if(is.null(app_pos) & not_null(app_title)){
     
@@ -143,15 +190,30 @@ rFunction = function(data = NULL,
     
     # non-existent/invalid user-specified App title
     if(nrow(app_products) == 0){
-      rlang::abort(message = c(
-        paste0("There is no App with name matching '", app_title, "' in Workflow ", 
-               wflw_inst_label, "."),
-        "i" = paste0("Please check the Workflow page and make sure the",
-                     " title of the target App is spelled accurately in",
-                     " parameter `app_title` (case-sensitive).")
-      ),
-      call = NULL
-      )
+      
+      logger.warn(paste0("There is no App with name matching '", app_title, "' in position #", 
+                         app_pos, " of Workflow ", wflw_inst_label, ".  ",
+                         "Make sure parameters `app_title` and `app_pos` point coherently to the target App."
+      ))
+      
+      if (is.null(data)) {
+        logger.fatal("No input data to return. Terminating retrieval")
+        rlang::abort(message = c(
+          paste0("There is no App with name matching '", app_title, "' in Workflow ", 
+                 wflw_inst_label, "."),
+          "i" = paste0("Please check the Workflow page and make sure the",
+                       " title of the target App is spelled accurately in",
+                       " parameter `app_title` (case-sensitive).")
+        ),
+        call = NULL
+        )
+      } else {
+        # If there is data, return it with warning
+        logger.warn("Returning input data with no retrieved data")
+        return(data)
+      }
+      
+      
     }
     
     # Dealing with multiple copies of same app in a Workflow, when only app_title is specified
