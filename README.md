@@ -171,6 +171,10 @@ data will be passed onto the next MoveApp in the following situations:
 -   The target workflow has more than one MoveApp names **Target App
     Title**
 
+If the input data is returned due to setting `return_on_fail = TRUE`, an
+additional artifact will be created, `FAIL_WARNING.txt`, to alert the
+user that the product has *not* been successfully retrieved.
+
 ### Most common errors
 
 If any of the inputs specified for the App parameters fails to

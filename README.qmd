@@ -90,6 +90,8 @@ A `move2::move2_loc` object comprising the extra attribute `appended_products`. 
 
 -   The target workflow has more than one MoveApp names **Target App Title**
 
+    If the input data is returned due to setting `return_on_fail = TRUE`, an additional artifact will be created, `FAIL_WARNING.txt`, to alert the user that the product has *not* been successfully retrieved.
+
 ### Most common errors
 
 If any of the inputs specified for the App parameters fails to accurately identify the target Product for retrieval, the App will generate informative error messages indicating where the misspecification occurred. Most common misspecifications include:

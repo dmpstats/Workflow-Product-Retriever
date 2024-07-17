@@ -108,6 +108,14 @@ rFunction = function(data = NULL,
       
       if (return_on_fail == TRUE) {
         logger.warn("return_on_fail is set to TRUE. Returning input data with no further data retrieved")
+        writeLines(paste0(
+          "WARNING: MoveApp product retrieval has failed for provided input settings.
+          Because return_on_fail was set to TRUE, the input data has been passed onto
+          the next MoveApp without terminating the workflow.
+          Please check input settings, and ensure that the target workflow has
+          not hit an error.
+          "
+        ), appArtifactPath("FAIL_WARNING.txt"))
         return(data)
       } else {
         logger.fatal("return_on_fail is set to FALSE. Terminating retrieval")
@@ -131,7 +139,7 @@ rFunction = function(data = NULL,
     # non-existent/invalid user-specified App position
     if(nrow(app_products) == 0){
       
-      logger.warn(paste0("There is no App with name matching '", app_title, "' in position #", 
+      logger.warn(paste0("There is no App in position #", 
                          app_pos, " of Workflow ", wflw_inst_label, ".  ",
                          "Make sure parameters `app_title` and `app_pos` point coherently to the target App."
       ))
@@ -139,11 +147,11 @@ rFunction = function(data = NULL,
       if (is.null(data)) {
         logger.fatal("No input data to return. Terminating retrieval")
         rlang::abort(message = c(
-          paste0("There is no App with name matching '", app_title, "' in Workflow ", 
+          paste0("There is no App in position '", app_pos, "' in Workflow ", 
                  wflw_inst_label, "."),
           "i" = paste0("Please check the Workflow page and make sure the",
-                       " title of the target App is spelled accurately in",
-                       " parameter `app_title` (case-sensitive).")
+                       " position of the workflow is correct in" ,
+                       " parameter `app_pos` (case-sensitive).")
         ),
         call = NULL
         )
@@ -152,6 +160,14 @@ rFunction = function(data = NULL,
         if (return_on_fail == TRUE) {
           # If there is data, return it with warning
           logger.warn("return_on_fail is set to TRUE. Returning input data with no further data retrieved")
+          writeLines(paste0(
+            "WARNING: MoveApp product retrieval has failed for provided input settings.
+          Because return_on_fail was set to TRUE, the input data has been passed onto
+          the next MoveApp without terminating the workflow.
+          Please check input settings, and ensure that the target workflow has
+          not hit an error.
+          "
+          ), appArtifactPath("FAIL_WARNING.txt"))
           return(data)
         } else {
           logger.fatal("return_on_fail is set to FALSE. Terminating retrieval")
@@ -182,7 +198,7 @@ rFunction = function(data = NULL,
       if (is.null(data)) {
         logger.fatal("No input data to return. Terminating retrieval")
         rlang::abort(message = c(
-          paste0("There is no App with name matching '", app_title, "' in Workflow ", 
+          paste0("There is no App with name matching '", app_title, "' in position ", app_pos, " of Workflow ", 
                  wflw_inst_label, "."),
           "i" = paste0("Please check the Workflow page and make sure the",
                        " title of the target App is spelled accurately in",
@@ -195,6 +211,14 @@ rFunction = function(data = NULL,
         if (return_on_fail == TRUE) {
           # If there is data, return it with warning
           logger.warn("return_on_fail is set to TRUE. Returning input data with no further data retrieved")
+          writeLines(paste0(
+            "WARNING: MoveApp product retrieval has failed for provided input settings.
+          Because return_on_fail was set to TRUE, the input data has been passed onto
+          the next MoveApp without terminating the workflow.
+          Please check input settings, and ensure that the target workflow has
+          not hit an error.
+          "
+          ), appArtifactPath("FAIL_WARNING.txt"))
           return(data)
         } else {
           logger.fatal("return_on_fail is set to FALSE. Terminating retrieval")
@@ -213,9 +237,8 @@ rFunction = function(data = NULL,
     # non-existent/invalid user-specified App title
     if(nrow(app_products) == 0){
       
-      logger.warn(paste0("There is no App with name matching '", app_title, "' in position #", 
-                         app_pos, " of Workflow ", wflw_inst_label, ".  ",
-                         "Make sure parameters `app_title` and `app_pos` point coherently to the target App."
+      logger.warn(paste0("There is no App with name matching '", app_title, "' in Workflow ", wflw_inst_label, ".  ",
+                         "Make sure parameter `app_title` points coherently to the target App."
       ))
       
       if (is.null(data)) {
@@ -234,6 +257,14 @@ rFunction = function(data = NULL,
         if (return_on_fail == TRUE) {
           # If there is data, return it with warning
           logger.warn("return_on_fail is set to TRUE. Returning input data with no further data retrieved")
+          writeLines(paste0(
+            "WARNING: MoveApp product retrieval has failed for provided input settings.
+          Because return_on_fail was set to TRUE, the input data has been passed onto
+          the next MoveApp without terminating the workflow.
+          Please check input settings, and ensure that the target workflow has
+          not hit an error.
+          "
+          ), appArtifactPath("FAIL_WARNING.txt"))
           return(data)
         } else {
           logger.fatal("return_on_fail is set to FALSE. Terminating retrieval")
@@ -259,6 +290,14 @@ rFunction = function(data = NULL,
         
         if (!is.null(data) & return_on_fail == TRUE) {
           logger.warn("return_on_fail is TRUE. Returning input data") 
+          writeLines(paste0(
+            "WARNING: MoveApp product retrieval has failed for provided input settings.
+          Because return_on_fail was set to TRUE, the input data has been passed onto
+          the next MoveApp without terminating the workflow.
+          Please check input settings, and ensure that the target workflow has
+          not hit an error.
+          "
+          ), appArtifactPath("FAIL_WARNING.txt"))
           return(data)
         } else {
           stop("return_on_fail is TRUE but no input data is provided. Terminating retrieval")
